@@ -1,0 +1,13 @@
+---
+- name: Configurar ISAKMP Policy y Llave Compartida
+  cisco.ios.ios_config:
+    parents: "crypto isakmp policy 10"
+    lines:
+      - "encr aes 256"
+      - "authentication pre-share"
+      - "group 5"
+
+- name: Configurar la Llave Compartida Global
+  cisco.ios.ios_config:
+    lines:
+      - "crypto isakmp key {{ ipsec_psk }} address 0.0.0.0"

@@ -1,0 +1,7 @@
+---
+- name: Configurar proceso OSPF
+  cisco.ios.ios_config:
+    parents: "router OSPF 1"
+    lines:
+      - "router-id {{ ospf_router_id }}"
+      - "network 10.0.0.0 0.255.255.255 area 0"

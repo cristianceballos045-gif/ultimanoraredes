@@ -1,0 +1,17 @@
+---
+wan_interface: "GigabitEthernet0/0"
+wan_ip: "192.168.100.11"
+wan_mask: "255.255.255.0"
+ospf_router_id: "192.168.100.11"
+
+tunnels:
+  - name: "Tunnel12"
+    ip: "10.0.12.1"
+    mask: "255.255.255.0"
+    source: "GigabitEthernet0/0"
+    destination: "192.168.100.12"
+  - name: "Tunnel13"
+    ip: "10.0.13.1"
+    mask: "255.255.255.0"
+    source: "GigabitEthernet0/0"
+    destination: "192.168.100.13"

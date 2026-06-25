@@ -1,0 +1,7 @@
+---
+- name: Configurar interfaz WAN fisica
+  cisco.ios.ios_config:
+    parents: "interface {{ wan_interface }}"
+    lines:
+      - "ip address {{ wan_ip }} {{ wan_mask }}"
+      - "no shutdown"

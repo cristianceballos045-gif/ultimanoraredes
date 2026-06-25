@@ -1,0 +1,9 @@
+---
+- name: Crear interfaces de Tunel GRE
+  cisco.ios.ios_config:
+    parents: "interface {{ item.name }}"
+    lines:
+      - "ip address {{ item.ip }} {{ item.mask }}"
+      - "tunnel source {{ item.source }}"
+      - "tunnel destination {{ item.destination }}"
+  loop: "{{ tunnels }}"

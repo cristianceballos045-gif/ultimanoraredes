@@ -1,0 +1,14 @@
+---
+- name: Desplegar Topologia IPSec/GRE/OSPF VPN Full-Mesh
+  hosts: routers
+  gather_facts: no
+  collections:
+    - cisco.ios
+  vars_files:
+    - /app/group_vars/all/vault.yml
+
+  roles:
+    - base_interfaces
+    - ipsec_crypto
+    - gre_tunnels
+    - ospf_routing
