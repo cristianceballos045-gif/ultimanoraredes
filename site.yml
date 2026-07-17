@@ -5,7 +5,7 @@
   collections:
     - cisco.ios
   vars_files:
-    - /app/group_vars/all/vault.yml
+    - group_vars/all/vault.yml
 
   roles:
     - base_interfaces

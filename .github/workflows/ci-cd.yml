@@ -1,0 +1,58 @@
+name: Pipeline CI-CD NetDevOps Pipo (Cisco IOS)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ----------------------------------------------------
+  # ETAPA 1: PRUEBAS (Valida que tus playbooks de Cisco no tengan errores)
+  # ----------------------------------------------------
+  pruebas:
+    name: Validar sintaxis de Ansible
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar codigo del repositorio de Pipo
+        uses: actions/checkout@v3
+
+      - name: 2. Configurar entorno Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 3. Instalar herramientas de Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: 4. Validar Sintaxis de site.yml (Cisco Playbook)
+        run: |
+          ansible-playbook --syntax-check site.yml -i inventory.ini
+
+  # ----------------------------------------------------
+  # ETAPA 2: SIMULACION DE DESPLIEGUE (Solo corre si las pruebas pasan)
+  # ----------------------------------------------------
+  despliegue_simulado:
+    name: Simular Despliegue en Routers Cisco
+    needs: pruebas
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 1. Descargar codigo del repositorio
+        uses: actions/checkout@v3
+
+      - name: 2. Instalar Ansible en el servidor de pruebas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: 3. Simular ejecucion de los Playbooks en Cisco (Dry-Run)
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: 'False'
+        run: |
+          # El parametro --check simula la configuracion de las VPNs y OSPF en los Cisco
+          ansible-playbook -i inventory.ini site.yml --check

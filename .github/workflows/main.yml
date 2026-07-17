@@ -1,0 +1,14 @@
+- name: Linting de Playbooks
+        run: |
+          ansible-lint site.yml
+      
+      - name: Chequeo de sintaxis
+        run: ansible-playbook site.yml --syntax-check
+
+  deploy:
+    needs: validate
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - name: Despliegue y Verificacion Final
+        run: ansible-playbook site.yml
