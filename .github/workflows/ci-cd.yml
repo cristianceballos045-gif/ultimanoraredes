@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Validar Sintaxis
-        run: ansible-playbook --syntax-check site.yml -i inventory.ini --vault-password-file "${{ github.workspace }}/.vault_pass"
+        run: |
+          echo "${{ secrets.VAULT_PASSWORD }}" > .vault_pass
+          ansible-playbook --syntax-check site.yml -i inventory.ini --vault-password-file .vault_pass
 
   despliegue_simulado:
     name: Simular Despliegue en Routers Cisco
@@ -23,4 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Dry-Run con Vault
-        run: ansible-playbook -i inventory.ini site.yml --check --vault-password-file "${{ github.workspace }}/.vault_pass"
+        run: |
+          echo "${{ secrets.VAULT_PASSWORD }}" > .vault_pass
+          ansible-playbook -i inventory.ini site.yml --check --vault-password-file .vault_pass
