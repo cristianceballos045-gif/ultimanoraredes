@@ -12,7 +12,7 @@ jobs:
   # ----------------------------------------------------
   pruebas:
     name: Validar sintaxis de Ansible
-    runs-on: ubuntu-latest
+    runs-on: self-hosted # He cambiado a self-hosted ya que usas tu Lenovo como Runner
 
     steps:
       - name: 1. Descargar codigo del repositorio de Pipo
@@ -30,7 +30,7 @@ jobs:
 
       - name: 4. Validar Sintaxis de site.yml (Cisco Playbook)
         run: |
-          ansible-playbook --syntax-check site.yml -i inventory.ini
+          ansible-playbook --syntax-check site.yml -i inventory.ini --vault-password-file .vault_pass
 
   # ----------------------------------------------------
   # ETAPA 2: SIMULACION DE DESPLIEGUE (Solo corre si las pruebas pasan)
@@ -38,21 +38,16 @@ jobs:
   despliegue_simulado:
     name: Simular Despliegue en Routers Cisco
     needs: pruebas
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: github.ref == 'refs/heads/main'
 
     steps:
       - name: 1. Descargar codigo del repositorio
         uses: actions/checkout@v3
 
-      - name: 2. Instalar Ansible en el servidor de pruebas
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
-
-      - name: 3. Simular ejecucion de los Playbooks en Cisco (Dry-Run)
+      - name: 2. Simular ejecucion de los Playbooks en Cisco (Dry-Run)
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'False'
         run: |
           # El parametro --check simula la configuracion de las VPNs y OSPF en los Cisco
-          ansible-playbook -i inventory.ini site.yml --check
+          ansible-playbook -i inventory.ini site.yml --check --vault-password-file .vault_pass
